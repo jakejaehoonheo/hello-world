@@ -1,0 +1,8 @@
+pykrx>=1.0.45
+yfinance>=0.2.31
+pandas>=2.1.0
+ta>=0.11.0
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+anthropic>=0.34.0
+python-dotenv>=1.0.0
