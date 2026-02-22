@@ -3,6 +3,8 @@
 기술적 지표를 종합하여 5단계 시그널과 10점 만점 점수를 산출합니다.
 """
 
+from __future__ import annotations
+
 import config
 
 

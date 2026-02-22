@@ -3,6 +3,8 @@
 pykrx를 주 데이터 소스로 사용하고, yfinance를 보조로 활용합니다.
 """
 
+from __future__ import annotations
+
 import logging
 from datetime import datetime, timedelta
 

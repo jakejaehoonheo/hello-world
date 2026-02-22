@@ -3,6 +3,8 @@
 이동평균선, RSI, MACD, 볼린저밴드, 거래량 분석을 수행합니다.
 """
 
+from __future__ import annotations
+
 import logging
 
 import pandas as pd
