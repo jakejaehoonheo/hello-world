@@ -150,6 +150,12 @@ def write_output(results: list[dict], market_summary: str) -> None:
         "볼밴위치",
         "거래량비율",
         "종합점수(10점)",
+        "이익수익률(%)",
+        "이익수익률등급",
+        "자본수익률ROE(%)",
+        "ROE등급",
+        "매직포뮬러점수",
+        "매직포뮬러등급",
         "AI분석요약",
         "자연어쿼리답변",
     ]
@@ -157,6 +163,9 @@ def write_output(results: list[dict], market_summary: str) -> None:
 
     # 4행~: 종목 데이터
     for r in results:
+        ey = r.get("earnings_yield")
+        roe = r.get("roe")
+        ms = r.get("magic_score")
         row = [
             r.get("ticker", ""),
             r.get("name", ""),
@@ -168,6 +177,12 @@ def write_output(results: list[dict], market_summary: str) -> None:
             r.get("bb_position", "N/A"),
             f"{r.get('volume_ratio', 0):.2f}배",
             f"{r.get('score', 5.0):.1f}",
+            f"{ey:.2f}" if ey is not None else "N/A",
+            r.get("ey_grade", "N/A"),
+            f"{roe:.2f}" if roe is not None else "N/A",
+            r.get("roe_grade", "N/A"),
+            f"{ms:.1f}" if ms is not None else "N/A",
+            r.get("magic_grade", "N/A"),
             r.get("ai_summary", ""),
             r.get("query_answer", ""),
         ]
@@ -254,7 +269,7 @@ def _apply_formatting(service, sheet_name: str, num_rows: int) -> None:
                         "sheetId": sheet_id,
                         "dimension": "COLUMNS",
                         "startIndex": 0,
-                        "endIndex": 12,
+                        "endIndex": 18,
                     }
                 }
             },

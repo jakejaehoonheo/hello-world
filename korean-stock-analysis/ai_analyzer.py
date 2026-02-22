@@ -39,12 +39,14 @@ def _format_analysis_context(
     fundamental: dict,
     analysis: dict,
     signal: dict,
+    magic: dict | None = None,
 ) -> str:
     """분석 데이터를 Claude에 전달할 컨텍스트 문자열로 변환합니다."""
     ma = analysis.get("moving_averages", {})
     macd = analysis.get("macd", {})
     bb = analysis.get("bollinger", {})
     vol = analysis.get("volume", {})
+    mf = magic or {}
 
     current_price = price_info.get("current_price", 0)
     current_vol = vol.get("current_volume", 0)
@@ -61,6 +63,11 @@ def _format_analysis_context(
 - PBR: {fundamental.get('pbr', 'N/A')}
 - 배당수익률: {fundamental.get('dividend_yield', 'N/A')}%
 - 시가총액: {_safe_format_number(fundamental.get('market_cap'))}
+
+## 매직포뮬러 (조엘 그린블라트)
+- 이익수익률(EY): {mf.get('earnings_yield', 'N/A')}% ({mf.get('ey_grade', 'N/A')})
+- 자본수익률(ROE): {mf.get('roe', 'N/A')}% ({mf.get('roe_grade', 'N/A')})
+- 매직포뮬러 종합: {mf.get('magic_score', 'N/A')}/10 ({mf.get('magic_grade', 'N/A')})
 
 ## 기술적 분석
 - 이동평균선: 5일={ma.get('ma5', 'N/A')}, 20일={ma.get('ma20', 'N/A')}, 60일={ma.get('ma60', 'N/A')}, 120일={ma.get('ma120', 'N/A')}
@@ -87,6 +94,7 @@ def get_ai_summary(
     fundamental: dict,
     analysis: dict,
     signal: dict,
+    magic: dict | None = None,
 ) -> str:
     """Claude API를 사용하여 종목 분석 3줄 요약을 생성합니다.
 
@@ -94,7 +102,7 @@ def get_ai_summary(
         한국어 3줄 요약 문자열
     """
     context = _format_analysis_context(
-        ticker, name, price_info, fundamental, analysis, signal
+        ticker, name, price_info, fundamental, analysis, signal, magic
     )
 
     try:
@@ -105,12 +113,12 @@ def get_ai_summary(
             messages=[
                 {
                     "role": "user",
-                    "content": f"""다음 한국 주식 종목의 기술적 분석 데이터를 바탕으로,
+                    "content": f"""다음 한국 주식 종목의 기술적 분석 및 매직포뮬러 데이터를 바탕으로,
 개인 투자자가 이해하기 쉬운 한국어 3줄 요약을 작성해주세요.
 
 요약 규칙:
 1. 첫 줄: 현재 추세 판단 (상승/하락/횡보 + 핵심 근거)
-2. 둘째 줄: 주요 기술적 시그널 요약
+2. 둘째 줄: 주요 기술적 시그널 + 매직포뮬러 가치 평가 요약
 3. 셋째 줄: 단기 전망 및 주의사항
 
 각 줄은 50자 이내로 간결하게 작성하세요. 줄 구분은 " | "로 해주세요.
@@ -133,6 +141,7 @@ def answer_query(
     fundamental: dict,
     analysis: dict,
     signal: dict,
+    magic: dict | None = None,
 ) -> str:
     """사용자의 자연어 쿼리에 대해 Claude API로 답변합니다.
 
@@ -144,7 +153,7 @@ def answer_query(
         한국어 답변 문자열
     """
     context = _format_analysis_context(
-        ticker, name, price_info, fundamental, analysis, signal
+        ticker, name, price_info, fundamental, analysis, signal, magic
     )
 
     # 시장 전반 질문인지 확인

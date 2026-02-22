@@ -16,6 +16,7 @@ import config
 import data_collector
 import technical_analysis
 import signal_generator
+import magic_formula
 import ai_analyzer
 import sheets_manager
 
@@ -100,16 +101,19 @@ def analyze_stock(stock: dict) -> dict:
     prev_price = float(ohlcv["close"].iloc[-2]) if len(ohlcv) >= 2 else current_price
     signal = signal_generator.generate_signal(analysis, current_price, prev_price)
 
+    # 3.5. 매직포뮬러 분석
+    mf = magic_formula.calculate_magic_formula(fundamental)
+
     # 4. AI 분석 요약
     ai_summary = ai_analyzer.get_ai_summary(
-        ticker, name, price_info, fundamental, analysis, signal
+        ticker, name, price_info, fundamental, analysis, signal, mf
     )
 
     # 5. 자연어 쿼리 처리
     query_answer = ""
     if query:
         query_answer = ai_analyzer.answer_query(
-            query, ticker, name, price_info, fundamental, analysis, signal
+            query, ticker, name, price_info, fundamental, analysis, signal, mf
         )
 
     result = {
@@ -123,6 +127,12 @@ def analyze_stock(stock: dict) -> dict:
         "bb_position": analysis.get("bollinger", {}).get("position", "N/A"),
         "volume_ratio": analysis.get("volume", {}).get("volume_ratio", 0),
         "score": signal["score"],
+        "earnings_yield": mf.get("earnings_yield"),
+        "ey_grade": mf.get("ey_grade", "N/A"),
+        "roe": mf.get("roe"),
+        "roe_grade": mf.get("roe_grade", "N/A"),
+        "magic_score": mf.get("magic_score"),
+        "magic_grade": mf.get("magic_grade", "N/A"),
         "ai_summary": ai_summary,
         "query_answer": query_answer,
     }
