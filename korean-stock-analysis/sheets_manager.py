@@ -47,7 +47,7 @@ def read_input_sheet() -> list[dict]:
         if not row or not row[0].strip():
             continue
 
-        ticker = row[0].strip()
+        ticker = row[0].strip().zfill(6)
         name = row[1].strip() if len(row) > 1 else ""
         query = row[2].strip() if len(row) > 2 else ""
 
