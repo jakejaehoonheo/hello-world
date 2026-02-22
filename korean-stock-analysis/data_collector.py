@@ -71,18 +71,30 @@ def get_ohlcv(ticker: str, days: int = config.LOOKBACK_DAYS) -> pd.DataFrame:
         return pd.DataFrame()
 
 
+def _recent_trading_range() -> tuple[str, str]:
+    """주말/공휴일을 고려하여 최근 거래일을 포함하는 조회 범위를 반환합니다.
+
+    Returns:
+        (start_date, end_date) YYYYMMDD 형식
+    """
+    today = datetime.now()
+    # 최근 10일 범위를 조회하면 주말·공휴일과 무관하게 거래일 데이터를 얻을 수 있음
+    start = today - timedelta(days=10)
+    return _format_date(start), _format_date(today)
+
+
 def get_fundamental(ticker: str) -> dict:
     """종목의 펀더멘털 데이터 (PER, PBR, 배당수익률, 시가총액)를 가져옵니다.
 
     Returns:
         {"per": float, "pbr": float, "dividend_yield": float, "market_cap": int}
     """
-    today = _format_date(datetime.now())
+    start, end = _recent_trading_range()
     result = {"per": None, "pbr": None, "dividend_yield": None, "market_cap": None}
 
     try:
         fund_df = pykrx_stock.get_market_fundamental_by_date(
-            today, today, ticker
+            start, end, ticker
         )
         if not fund_df.empty:
             row = fund_df.iloc[-1]
@@ -94,7 +106,7 @@ def get_fundamental(ticker: str) -> dict:
         logger.exception("펀더멘털 조회 실패 (종목: %s)", ticker)
 
     try:
-        cap_df = pykrx_stock.get_market_cap_by_date(today, today, ticker)
+        cap_df = pykrx_stock.get_market_cap_by_date(start, end, ticker)
         if not cap_df.empty:
             cap_col = "시가총액" if "시가총액" in cap_df.columns else (
                 cap_df.columns[0] if len(cap_df.columns) > 0 else None

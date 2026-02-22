@@ -30,7 +30,7 @@ BB_STD = 2
 VOLUME_AVG_PERIOD = 20
 
 # Claude API 모델
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 
 # 시그널 임계값
 RSI_OVERSOLD = 30

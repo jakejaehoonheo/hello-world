@@ -18,6 +18,20 @@ def _get_client() -> anthropic.Anthropic:
     return anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
 
 
+def _safe_format_number(value, fmt: str = ",", default: str = "N/A") -> str:
+    """None-safe 숫자 포맷팅 헬퍼."""
+    if value is None:
+        return default
+    try:
+        if fmt == ",":
+            return f"{value:,}"
+        elif fmt == ",.0f":
+            return f"{value:,.0f}"
+        return str(value)
+    except (ValueError, TypeError):
+        return default
+
+
 def _format_analysis_context(
     ticker: str,
     name: str,
@@ -32,32 +46,36 @@ def _format_analysis_context(
     bb = analysis.get("bollinger", {})
     vol = analysis.get("volume", {})
 
+    current_price = price_info.get("current_price", 0)
+    current_vol = vol.get("current_volume", 0)
+    avg_vol = vol.get("avg_volume", 0)
+
     return f"""## 종목 정보
 - 종목코드: {ticker}
 - 종목명: {name}
-- 현재가: {price_info.get('current_price', 'N/A'):,}원
+- 현재가: {_safe_format_number(current_price)}원
 - 전일대비: {price_info.get('change_pct', 'N/A')}%
 
 ## 펀더멘털
 - PER: {fundamental.get('per', 'N/A')}
 - PBR: {fundamental.get('pbr', 'N/A')}
 - 배당수익률: {fundamental.get('dividend_yield', 'N/A')}%
-- 시가총액: {fundamental.get('market_cap', 'N/A')}
+- 시가총액: {_safe_format_number(fundamental.get('market_cap'))}
 
 ## 기술적 분석
-- 이동평균선: 5일={ma.get('ma5')}, 20일={ma.get('ma20')}, 60일={ma.get('ma60')}, 120일={ma.get('ma120')}
-- 골든크로스: {ma.get('golden_cross')}, 데드크로스: {ma.get('dead_cross')}
+- 이동평균선: 5일={ma.get('ma5', 'N/A')}, 20일={ma.get('ma20', 'N/A')}, 60일={ma.get('ma60', 'N/A')}, 120일={ma.get('ma120', 'N/A')}
+- 골든크로스: {ma.get('golden_cross', False)}, 데드크로스: {ma.get('dead_cross', False)}
 - RSI(14): {analysis.get('rsi', 'N/A')}
-- MACD: {macd.get('macd')}, 시그널: {macd.get('signal')}, 히스토그램: {macd.get('histogram')}
-- MACD 방향: {macd.get('direction')}, 골든크로스: {macd.get('golden_cross')}, 데드크로스: {macd.get('dead_cross')}
-- 볼린저밴드: 상단={bb.get('upper')}, 중앙={bb.get('middle')}, 하단={bb.get('lower')}
-- 볼린저밴드 위치: {bb.get('position')}, %B={bb.get('pct_b')}
-- 거래량: {vol.get('current_volume'):,}, 20일 평균: {vol.get('avg_volume', 0):,.0f}
-- 거래량 비율: {vol.get('volume_ratio')}배, 급증여부: {vol.get('is_surge')}
+- MACD: {macd.get('macd', 'N/A')}, 시그널: {macd.get('signal', 'N/A')}, 히스토그램: {macd.get('histogram', 'N/A')}
+- MACD 방향: {macd.get('direction', 'N/A')}, 골든크로스: {macd.get('golden_cross', False)}, 데드크로스: {macd.get('dead_cross', False)}
+- 볼린저밴드: 상단={bb.get('upper', 'N/A')}, 중앙={bb.get('middle', 'N/A')}, 하단={bb.get('lower', 'N/A')}
+- 볼린저밴드 위치: {bb.get('position', 'N/A')}, %B={bb.get('pct_b', 'N/A')}
+- 거래량: {_safe_format_number(current_vol)}, 20일 평균: {_safe_format_number(avg_vol, ",.0f")}
+- 거래량 비율: {vol.get('volume_ratio', 0)}배, 급증여부: {vol.get('is_surge', False)}
 
 ## 종합 시그널
-- 판정: {signal.get('signal')}
-- 종합점수: {signal.get('score')}/10
+- 판정: {signal.get('signal', 'N/A')}
+- 종합점수: {signal.get('score', 'N/A')}/10
 - 세부점수: {json.dumps(signal.get('details', {}), ensure_ascii=False)}
 """
 
