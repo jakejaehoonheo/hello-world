@@ -3,6 +3,8 @@
 종목 분석 요약과 자연어 쿼리 응답을 처리합니다.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 
