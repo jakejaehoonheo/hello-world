@@ -130,9 +130,18 @@ def get_ai_summary(
             ],
         )
         return response.content[0].text.strip()
-    except Exception:
+    except anthropic.AuthenticationError:
+        logger.error("Anthropic API 키가 유효하지 않습니다.")
+        return "AI 분석 실패: API 키 인증 오류 — .env의 ANTHROPIC_API_KEY를 확인하세요"
+    except anthropic.NotFoundError as e:
+        logger.error("모델을 찾을 수 없습니다: %s", config.CLAUDE_MODEL)
+        return f"AI 분석 실패: 모델 '{config.CLAUDE_MODEL}' 없음 — {e}"
+    except anthropic.RateLimitError:
+        logger.error("API 요청 한도 초과")
+        return "AI 분석 실패: API 요청 한도 초과 — 잠시 후 재시도하세요"
+    except Exception as e:
         logger.exception("AI 요약 생성 실패 (종목: %s)", ticker)
-        return "AI 분석 요약 생성 실패"
+        return f"AI 분석 요약 생성 실패: {type(e).__name__}: {e}"
 
 
 def answer_query(
@@ -191,6 +200,15 @@ def answer_query(
             messages=[{"role": "user", "content": user_message}],
         )
         return response.content[0].text.strip()
-    except Exception:
+    except anthropic.AuthenticationError:
+        logger.error("Anthropic API 키가 유효하지 않습니다.")
+        return "답변 실패: API 키 인증 오류 — .env의 ANTHROPIC_API_KEY를 확인하세요"
+    except anthropic.NotFoundError as e:
+        logger.error("모델을 찾을 수 없습니다: %s", config.CLAUDE_MODEL)
+        return f"답변 실패: 모델 '{config.CLAUDE_MODEL}' 없음 — {e}"
+    except anthropic.RateLimitError:
+        logger.error("API 요청 한도 초과")
+        return "답변 실패: API 요청 한도 초과 — 잠시 후 재시도하세요"
+    except Exception as e:
         logger.exception("쿼리 답변 실패 (종목: %s, 쿼리: %s)", ticker, query)
-        return f"질문 '{query}'에 대한 답변 생성 실패"
+        return f"질문 '{query}'에 대한 답변 생성 실패: {type(e).__name__}: {e}"

@@ -101,7 +101,15 @@ def get_fundamental(ticker: str) -> dict:
             rename = {"PER": "per", "PBR": "pbr", "DIV": "dividend_yield"}
             for orig, key in rename.items():
                 if orig in fund_df.columns:
-                    result[key] = float(row[orig]) if pd.notna(row[orig]) else None
+                    val = float(row[orig]) if pd.notna(row[orig]) else None
+                    # pykrx는 PER/PBR 데이터가 없을 때 0.0을 반환하므로 None 처리
+                    if val is not None and val == 0.0 and key in ("per", "pbr"):
+                        val = None
+                    result[key] = val
+            logger.info(
+                "펀더멘털 조회 결과 (%s): PER=%s, PBR=%s",
+                ticker, result["per"], result["pbr"],
+            )
     except Exception:
         logger.exception("펀더멘털 조회 실패 (종목: %s)", ticker)
 
