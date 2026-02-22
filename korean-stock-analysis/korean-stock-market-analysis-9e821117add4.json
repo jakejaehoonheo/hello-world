@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "korean-stock-market-analysis",
+  "private_key_id": "9e821117add4160db40ad4e12e817fcc4f0b758f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDkBkEdvROivdM5\n1rJ/rwoeS90QY+0KGoiFwA1h74P4t8yKCeHQAahhn/V72gVlvrJcLLqWd8+bb6Lj\nESzwvseyWWsAdCXzBX+j1rtxDS80iu6BLR6+pGlQyw+rOSJDoITjtSgmWCAFglZl\nUL26P4DWInre4K030H7tqHxWWFTxzVvmzu7nNrSNQ3ZsODbjE6zG0wl7jIFrD0Pl\nEixv3fehMHhc2Sx8dL8WfUYO/KoSV/+oodq+E4z7uXFRCyV2pSOFFqrq0BCI35Gq\nlMBmSq08SDCU5CX0qdAHYQTCcf6Mb/UzNRv7X7uuX7BP1cThOzgbflaZf/0NIm+H\nQIUF8pO5AgMBAAECggEADrd3nul72bJKLm60pQiBTOzFBwCIBTGqs4UuZ+57NEN6\njEMwg4oD2c8m2xg6ZnNtFAVgAoOXjtbg6qpKXfxWK6TZQtV8OIfXkdWzUcvRyuCX\nnZcxp4i5clk0uO6OT1KOGRsxTO49nNVpaY8RO7LLCCcACp/yFgrbElAgPDtluhhR\ngMuI9cWcZY2GAbYGFJeJlrCgpUX5ngUEr/GZNA04vrlvpIaws7Nm700NbJGYdV9/\nZFtdqe/+HsmDGHJaguwjFe0KK/ZYV3WfzAxMlASvVX1tJkqkTm19VVLmQMpIgC3S\ng0pOl0pbuu6uCQJ8ycV7JgifgAlxpb7UB8fZol+b/QKBgQDzMhK7MkAggcOWiR97\n52SEWoXjCCwIFyX2zs4vghnP7NDaGdglLGkReZfdqXHd4hKww8B31gaEbs1Rj/DQ\nIUhSiDCbSKYfu789fWIHvqk8Ho6CYeaXALCG5E0zQ59l774ddBQ9WcKcv1kOkg4x\nef9zjDf94rK/49C7z2UZNZP4tQKBgQDwB7IYHqnatiadGaRHxPLT25OA+EePV/VN\nc9FgpcciEGOHsE4EGKzf8O8btLDZqC+YKrGphOs2WZccSrTeMOc355JV9jrt7FAs\nITVoLzuuJMaUJUtiy/rfr5GsM4tL+e1Pj7/P3203EKb54fDs+k4JIdEBFMxhY3Qf\nkJWgm3jldQKBgHJ/RbBalTR4w6PxBSCprXpewCBGbayVcWtErHBTmWF6Rk4Y0tmV\nkhYHIEfdCd4EHPaaAtiorELXg9T9psvmj41Dz1acmpHgK8aAbJHm4viKDmA2RYEc\ncv/fJrWXBcnRWLm3N/w2cVipAf3JJ+OFY458GrRucefEEzcJCrkWr4btAoGADrdK\nEfR/UWttfqA91DCc+qQxrOyL5pvr7C23nodLaCk9EOqcPeANaUVqQ3aWiSGomVm0\nvsHpcdGYVCG4aQ7yfhjyfda00jV0zN/UWGjc7dZPXnHS52G+Jcyrz7TxS10tUX1s\nsx/toDyjIBrcHItUEXdDSx+tUCM60VyZ79jYVqkCgYAhEnJhK8eVLC/h6lvnmIpD\n3ghBBgaZ2/a0yLYvb1mRuwQ3i9C9i3GxAWo4xcnhjUuGsdgukUmsbWLiAbn5zAWv\nZQMW/FvdhwV889Ekuy2BihU5ZCB9chahI3wTTKO0/eg8yt3o4fn+tXQrgPtpyxzW\ngfUAn1ZShwHn6UvmxvD5ww==\n-----END PRIVATE KEY-----\n",
+  "client_email": "stock-sheets@korean-stock-market-analysis.iam.gserviceaccount.com",
+  "client_id": "110768516386680051195",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/stock-sheets%40korean-stock-market-analysis.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
