@@ -127,6 +127,60 @@ def get_fundamental(ticker: str) -> dict:
     return result
 
 
+def get_historical_dividend_yields(ticker: str, years: int = 3) -> list[float]:
+    """과거 N년간의 월별 배당수익률 데이터를 가져옵니다.
+
+    '배당은 거짓말하지 않는다' 분석을 위한 역사적 배당수익률 조회.
+
+    Args:
+        ticker: 종목코드
+        years: 조회 기간 (년, 기본 3년)
+
+    Returns:
+        0보다 큰 배당수익률 값들의 리스트 (%)
+    """
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=years * 365)
+
+    try:
+        fund_df = pykrx_stock.get_market_fundamental_by_date(
+            _format_date(start_date),
+            _format_date(end_date),
+            ticker,
+        )
+        if fund_df.empty:
+            logger.warning("역사적 배당 데이터 없음: %s", ticker)
+            return []
+
+        div_col = "DIV" if "DIV" in fund_df.columns else None
+        if div_col is None:
+            logger.warning("DIV 컬럼 없음: %s", ticker)
+            return []
+
+        # 월별 마지막 거래일 데이터만 추출 (데이터량 축소)
+        monthly = fund_df.resample("ME").last()
+
+        # 0보다 큰 유효 배당수익률만 추출
+        yields = [
+            float(v)
+            for v in monthly[div_col]
+            if pd.notna(v) and float(v) > 0
+        ]
+
+        logger.info(
+            "역사적 배당수익률 조회 (%s): %d개월 데이터, 범위 %.2f%%~%.2f%%",
+            ticker,
+            len(yields),
+            min(yields) if yields else 0,
+            max(yields) if yields else 0,
+        )
+        return yields
+
+    except Exception:
+        logger.exception("역사적 배당수익률 조회 실패 (종목: %s)", ticker)
+        return []
+
+
 def get_market_index(index_ticker: str = "1001") -> dict | None:
     """시장 지수 정보를 가져옵니다.
 

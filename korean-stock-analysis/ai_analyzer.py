@@ -42,6 +42,7 @@ def _format_analysis_context(
     analysis: dict,
     signal: dict,
     magic: dict | None = None,
+    dividend: dict | None = None,
 ) -> str:
     """분석 데이터를 Claude에 전달할 컨텍스트 문자열로 변환합니다."""
     ma = analysis.get("moving_averages", {})
@@ -49,6 +50,7 @@ def _format_analysis_context(
     bb = analysis.get("bollinger", {})
     vol = analysis.get("volume", {})
     mf = magic or {}
+    div = dividend or {}
 
     current_price = price_info.get("current_price", 0)
     current_vol = vol.get("current_volume", 0)
@@ -70,6 +72,13 @@ def _format_analysis_context(
 - 이익수익률(EY): {mf.get('earnings_yield', 'N/A')}% ({mf.get('ey_grade', 'N/A')})
 - 자본수익률(ROE): {mf.get('roe', 'N/A')}% ({mf.get('roe_grade', 'N/A')})
 - 매직포뮬러 종합: {mf.get('magic_score', 'N/A')}/10 ({mf.get('magic_grade', 'N/A')})
+
+## 배당 분석 (배당은 거짓말하지 않는다 — 제랄딘 와이스)
+- 현재 배당수익률: {div.get('current_yield', 'N/A')}%
+- 역사적 범위: {div.get('yield_low', 'N/A')}% ~ {div.get('yield_high', 'N/A')}%
+- 역사적 평균: {div.get('yield_avg', 'N/A')}%
+- 배당수익률 위치: {div.get('yield_position', 'N/A')}% (0=고평가, 100=저평가)
+- 배당 신호: {div.get('dividend_signal', 'N/A')} ({div.get('dividend_grade', 'N/A')})
 
 ## 기술적 분석
 - 이동평균선: 5일={ma.get('ma5', 'N/A')}, 20일={ma.get('ma20', 'N/A')}, 60일={ma.get('ma60', 'N/A')}, 120일={ma.get('ma120', 'N/A')}
@@ -97,6 +106,7 @@ def get_ai_summary(
     analysis: dict,
     signal: dict,
     magic: dict | None = None,
+    dividend: dict | None = None,
 ) -> str:
     """Claude API를 사용하여 종목 분석 3줄 요약을 생성합니다.
 
@@ -104,7 +114,7 @@ def get_ai_summary(
         한국어 3줄 요약 문자열
     """
     context = _format_analysis_context(
-        ticker, name, price_info, fundamental, analysis, signal, magic
+        ticker, name, price_info, fundamental, analysis, signal, magic, dividend
     )
 
     try:
@@ -115,12 +125,12 @@ def get_ai_summary(
             messages=[
                 {
                     "role": "user",
-                    "content": f"""다음 한국 주식 종목의 기술적 분석 및 매직포뮬러 데이터를 바탕으로,
+                    "content": f"""다음 한국 주식 종목의 기술적 분석, 매직포뮬러, 배당 분석 데이터를 바탕으로,
 개인 투자자가 이해하기 쉬운 한국어 3줄 요약을 작성해주세요.
 
 요약 규칙:
 1. 첫 줄: 현재 추세 판단 (상승/하락/횡보 + 핵심 근거)
-2. 둘째 줄: 주요 기술적 시그널 + 매직포뮬러 가치 평가 요약
+2. 둘째 줄: 주요 기술적 시그널 + 매직포뮬러/배당 가치 평가 요약
 3. 셋째 줄: 단기 전망 및 주의사항
 
 각 줄은 50자 이내로 간결하게 작성하세요. 줄 구분은 " | "로 해주세요.
@@ -153,6 +163,7 @@ def answer_query(
     analysis: dict,
     signal: dict,
     magic: dict | None = None,
+    dividend: dict | None = None,
 ) -> str:
     """사용자의 자연어 쿼리에 대해 Claude API로 답변합니다.
 
@@ -164,7 +175,7 @@ def answer_query(
         한국어 답변 문자열
     """
     context = _format_analysis_context(
-        ticker, name, price_info, fundamental, analysis, signal, magic
+        ticker, name, price_info, fundamental, analysis, signal, magic, dividend
     )
 
     # 시장 전반 질문인지 확인

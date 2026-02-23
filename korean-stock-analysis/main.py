@@ -17,6 +17,7 @@ import data_collector
 import technical_analysis
 import signal_generator
 import magic_formula
+import dividend_analysis
 import ai_analyzer
 import sheets_manager
 
@@ -104,16 +105,22 @@ def analyze_stock(stock: dict) -> dict:
     # 3.5. 매직포뮬러 분석
     mf = magic_formula.calculate_magic_formula(fundamental)
 
+    # 3.6. 배당 분석 (배당은 거짓말하지 않는다)
+    hist_yields = data_collector.get_historical_dividend_yields(ticker)
+    div = dividend_analysis.analyze_dividend_signal(
+        fundamental.get("dividend_yield"), hist_yields
+    )
+
     # 4. AI 분석 요약
     ai_summary = ai_analyzer.get_ai_summary(
-        ticker, name, price_info, fundamental, analysis, signal, mf
+        ticker, name, price_info, fundamental, analysis, signal, mf, div
     )
 
     # 5. 자연어 쿼리 처리
     query_answer = ""
     if query:
         query_answer = ai_analyzer.answer_query(
-            query, ticker, name, price_info, fundamental, analysis, signal, mf
+            query, ticker, name, price_info, fundamental, analysis, signal, mf, div
         )
 
     result = {
@@ -133,6 +140,13 @@ def analyze_stock(stock: dict) -> dict:
         "roe_grade": mf.get("roe_grade", "N/A"),
         "magic_score": mf.get("magic_score"),
         "magic_grade": mf.get("magic_grade", "N/A"),
+        "current_yield": div.get("current_yield"),
+        "yield_high": div.get("yield_high"),
+        "yield_low": div.get("yield_low"),
+        "yield_avg": div.get("yield_avg"),
+        "yield_position": div.get("yield_position"),
+        "dividend_signal": div.get("dividend_signal", "N/A"),
+        "dividend_grade": div.get("dividend_grade", "N/A"),
         "ai_summary": ai_summary,
         "query_answer": query_answer,
     }

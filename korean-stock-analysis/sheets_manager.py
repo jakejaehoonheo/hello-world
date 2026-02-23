@@ -156,6 +156,11 @@ def write_output(results: list[dict], market_summary: str) -> None:
         "ROE등급",
         "매직포뮬러점수",
         "매직포뮬러등급",
+        "배당수익률(%)",
+        "배당수익률범위",
+        "배당수익률위치(%)",
+        "배당신호",
+        "배당등급",
         "AI분석요약",
         "자연어쿼리답변",
     ]
@@ -166,6 +171,10 @@ def write_output(results: list[dict], market_summary: str) -> None:
         ey = r.get("earnings_yield")
         roe = r.get("roe")
         ms = r.get("magic_score")
+        cy = r.get("current_yield")
+        yh = r.get("yield_high")
+        yl = r.get("yield_low")
+        yp = r.get("yield_position")
         row = [
             r.get("ticker", ""),
             r.get("name", ""),
@@ -183,6 +192,11 @@ def write_output(results: list[dict], market_summary: str) -> None:
             r.get("roe_grade", "N/A"),
             f"{ms:.1f}" if ms is not None else "N/A",
             r.get("magic_grade", "N/A"),
+            f"{cy:.2f}" if cy is not None else "N/A",
+            f"{yl:.2f}~{yh:.2f}" if (yl is not None and yh is not None) else "N/A",
+            f"{yp:.1f}" if yp is not None else "N/A",
+            r.get("dividend_signal", "N/A"),
+            r.get("dividend_grade", "N/A"),
             r.get("ai_summary", ""),
             r.get("query_answer", ""),
         ]
@@ -269,7 +283,7 @@ def _apply_formatting(service, sheet_name: str, num_rows: int) -> None:
                         "sheetId": sheet_id,
                         "dimension": "COLUMNS",
                         "startIndex": 0,
-                        "endIndex": 18,
+                        "endIndex": 23,
                     }
                 }
             },
