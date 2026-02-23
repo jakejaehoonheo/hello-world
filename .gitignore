@@ -1,0 +1,27 @@
+# Credentials (NEVER commit)
+credentials.json
+*.json
+!package.json
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Output
+output/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

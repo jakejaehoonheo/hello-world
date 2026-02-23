@@ -1,0 +1,13 @@
+yfinance>=0.2.31
+pandas>=2.0.0
+numpy>=1.24.0
+gspread>=5.12.0
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+FinanceDataReader>=0.9.66
+pykrx>=1.0.45
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+tqdm>=4.66.0
+python-dotenv>=1.0.0
