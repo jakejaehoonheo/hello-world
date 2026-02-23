@@ -19,6 +19,7 @@ import signal_generator
 import magic_formula
 import dividend_analysis
 import ai_analyzer
+import stock_screener
 import sheets_manager
 
 # 로깅 설정
@@ -222,9 +223,31 @@ def main():
         if i < len(stocks):
             time.sleep(1)
 
-    # 4. 결과를 Google Sheets에 기록
+    # 4. 추천 종목 스크리닝
+    analyzed_tickers = [s["ticker"] for s in stocks]
+    recommended_results = []
     try:
-        sheets_manager.write_output(results, market_summary)
+        recommendations = stock_screener.screen_stocks(
+            exclude_tickers=analyzed_tickers, top_n=3
+        )
+        for j, rec in enumerate(recommendations, 1):
+            logger.info(
+                "[추천 %d/%d] %s (%s) — %s",
+                j, len(recommendations), rec["name"], rec["ticker"], rec["reason"],
+            )
+            try:
+                result = analyze_stock(rec)
+                result["recommendation_reason"] = rec["reason"]
+                recommended_results.append(result)
+            except Exception:
+                logger.exception("추천 종목 분석 실패: %s", rec["ticker"])
+            time.sleep(1)
+    except Exception:
+        logger.exception("추천 종목 스크리닝 실패 (무시하고 계속)")
+
+    # 5. 결과를 Google Sheets에 기록
+    try:
+        sheets_manager.write_output(results, market_summary, recommended_results)
         logger.info("Google Sheets 기록 완료")
     except Exception:
         logger.exception("Google Sheets 기록 실패")
