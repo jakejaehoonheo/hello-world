@@ -3,6 +3,8 @@
 INPUT 시트에서 종목 목록을 읽고, 날짜별 OUTPUT 시트에 결과를 기록합니다.
 """
 
+from __future__ import annotations
+
 import logging
 from datetime import datetime
 
